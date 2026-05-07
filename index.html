@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>SOMA.AI - Autonomous BIM Operating System</title>
+    <style>
+        body { margin: 0; background: #000; color: #0ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+        .hud-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; height: 100vh; }
+        .panel { background: rgba(0, 255, 255, 0.05); border: 1px solid rgba(0, 255, 255, 0.2); padding: 15px; border-radius: 10px; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
+        .panel:before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #0ff, transparent); animation: scan 3s linear infinite; }
+                  @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(1000%); } }
+        h2 { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0, 255, 255, 0.3); padding-bottom: 5px; margin-top: 0; }
+        .metric { font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px #0ff; }
+        .chart { width: 100%; height: 150px; background: repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(0, 255, 255, 0.05) 20px, rgba(0, 255, 255, 0.05) 21px); margin: 10px 0; }
+        .image-container img { width: 100%; border-radius: 5px; border: 1px solid rgba(0, 255, 255, 0.3); margin-top: 10px; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
+        .nav-item { padding: 10px 20px; background: rgba(0, 255, 255, 0.1); border: 1px solid #0ff; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+    </style>
+      </head>
+      <body>
+          <div class="hud-container">
+              <div class="panel">
+                  <h2>Command Center</h2>
+                  <div class="metric pulse">BIM HEALTH: 98.4%</div>
+                  <div class="chart"></div>
+                  <p>Live clash reduction analytics and autonomous workflow timelines.</p>
+                  <div class="image-container"><img src="command_center.png" alt="Command Center Hologram"></div>
+              </div>
+              <div class="panel">
+                  <h2>AI Agents</h2>
+                  <div class="metric">ACTIVE AGENTS: 12</div>
+                  <p>Specialized agents for MEP, Structural, and Coordination.</p>
+                  <div class="image-container"><img src="ai_orchestrator.png" alt="AI Agent Orchestrator"></div>
+              </div>
+              <div class="panel">
+                  <h2>Digital Twin</h2>
+                  <div class="metric pulse">IOT SYNC: ACTIVE</div>
+                  <p>Real-time building diagnostics and maintenance alerts.</p>
+                  <div class="image-container"><img src="digital_twin.png" alt="Digital Twin Building"></div>
+              </div>
+              <div class="panel">
+                  <h2>QA/QC Engine</h2>
+                  <div class="metric">ISO 19650 COMPLIANT</div>
+                  <p>Autonomous governance and model health auditing.</p>
+                  <div class="image-container"><img src="qa_qc_audit.png" alt="QA/QC Audit Engine"></div>
+              </div>
+              <div class="panel">
+                  <h2>Data Center AI</h2>
+                  <div class="metric pulse">RACK DENSITY: OPTIMIZED</div>
+                  <p>Hyperscale infrastructure and thermal path visualization.</p>
+                  <div class="image-container"><img src="dc_ai.png" alt="Data Center AI"></div>
+              </div>
+              <div class="panel">
+                  <h2>System Status</h2>
+                  <div class="metric">SOMA OS v2.4</div>
+                  <p>All modules operational. Neural sync established.</p>
+              </div>
+          </div>
+      </body>
+      </html>
