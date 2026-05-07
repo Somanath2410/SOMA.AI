@@ -1,63 +1,689 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>SOMA.AI - Autonomous BIM Operating System</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOMA.AI | The Intelligence Layer for BIM Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; background: #000; color: #0ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
-        .hud-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; height: 100vh; }
-        .panel { background: rgba(0, 255, 255, 0.05); border: 1px solid rgba(0, 255, 255, 0.2); padding: 15px; border-radius: 10px; position: relative; overflow: hidden; backdrop-filter: blur(10px); }
-        .panel:before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #0ff, transparent); animation: scan 3s linear infinite; }
-                  @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(1000%); } }
-        h2 { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0, 255, 255, 0.3); padding-bottom: 5px; margin-top: 0; }
-        .metric { font-size: 2rem; font-weight: bold; text-shadow: 0 0 10px #0ff; }
-        .chart { width: 100%; height: 150px; background: repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(0, 255, 255, 0.05) 20px, rgba(0, 255, 255, 0.05) 21px); margin: 10px 0; }
-        .image-container img { width: 100%; border-radius: 5px; border: 1px solid rgba(0, 255, 255, 0.3); margin-top: 10px; }
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; }
-        .nav-item { padding: 10px 20px; background: rgba(0, 255, 255, 0.1); border: 1px solid #0ff; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        :root {
+            --bg-deep: #020617;
+            --bg-panel: rgba(30, 41, 59, 0.6);
+            --accent: #0ea5e9;
+            --accent-glow: rgba(14, 165, 233, 0.5);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffd700;
+            --status-success: #22c55e;
+            --status-warning: #f59e0b;
+            --status-critical: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-main);
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.8)),
+                url('./soma_neural_network_bg_1778136378692.png');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .hud-font { font-family: 'Orbitron', sans-serif; }
+
+        /* Glassmorphism */
+        .glass {
+            background: var(--bg-panel);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.1);
+        }
+
+        /* Header */
+        header {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span { color: var(--accent); }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent);
+            background: rgba(14, 165, 233, 0.1);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Views */
+        main { display: none; padding-top: 100px; }
+        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .dc-view, .discipline-view { padding: 4rem 3rem; min-height: calc(100vh - 100px); }
+
+        /* Grid Layouts */
+        .dc-grid, .discipline-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 4rem 3rem;
+        }
+
+        /* Widgets */
+        .widget { padding: 1.5rem; margin-bottom: 1rem; position: relative; }
+        .widget-title { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent); margin-bottom: 1rem; letter-spacing: 1px; }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            font-family: 'Orbitron';
+            font-size: 0.75rem;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+        .btn-outline:hover { background: rgba(14, 165, 233, 0.1); }
+
+        /* HUD */
+        .view-port { position: relative; overflow: hidden; border-radius: 20px; }
+        .hud-overlay { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .hud-tag { background: rgba(0,0,0,0.6); padding: 5px 12px; border: 1px solid var(--accent); color: var(--accent); font-family: 'Orbitron'; font-size: 0.6rem; border-radius: 4px; }
+
+        /* Feature Lists */
+        .feature-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+        .feature-item { font-size: 0.85rem; color: var(--text-dim); }
+
+        /* Command Bar */
+        .command-center { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 600px; z-index: 2000; }
+        .command-bar { width: 100%; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--accent); border-radius: 50px; padding: 1.2rem 2.5rem; color: white; outline: none; box-shadow: 0 0 30px rgba(14, 165, 233, 0.2); }
+
+        /* New Widgets */
+        .stat-card { padding: 1.5rem; display: flex; flex-direction: column; gap: 5px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; font-family: 'Orbitron'; color: var(--text-main); }
+        .stat-label { font-size: 0.6rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
+        .agent-card { padding: 1.5rem; display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--accent); }
+        .agent-status { display: flex; align-items: center; gap: 8px; font-size: 0.6rem; font-family: 'Orbitron'; }
+        .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
+
+        .circular-chart { width: 80px; height: 80px; }
+        .circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 3; }
+        .circle { fill: none; stroke-width: 3; stroke-linecap: round; animation: progress 1s ease-out forwards; }
+        @keyframes progress { 0% { stroke-dasharray: 0 100; } }
+
+        .timeline { position: relative; padding-left: 30px; border-left: 1px solid var(--glass-border); margin: 1rem 0; }
+        .timeline-item { position: relative; margin-bottom: 1.5rem; }
+        .timeline-item::before { content: ''; position: absolute; left: -35px; top: 5px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; border: 2px solid var(--bg-deep); }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .grid-agents { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+
+        .scroll-container { max-height: 400px; overflow-y: auto; padding-right: 10px; }
+        .scroll-container::-webkit-scrollbar { width: 4px; }
+        .scroll-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
-      </head>
-      <body>
-          <div class="hud-container">
-              <div class="panel">
-                  <h2>Command Center</h2>
-                  <div class="metric pulse">BIM HEALTH: 98.4%</div>
-                  <div class="chart"></div>
-                  <p>Live clash reduction analytics and autonomous workflow timelines.</p>
-                  <div class="image-container"><img src="command_center.png" alt="Command Center Hologram"></div>
-              </div>
-              <div class="panel">
-                  <h2>AI Agents</h2>
-                  <div class="metric">ACTIVE AGENTS: 12</div>
-                  <p>Specialized agents for MEP, Structural, and Coordination.</p>
-                  <div class="image-container"><img src="ai_orchestrator.png" alt="AI Agent Orchestrator"></div>
-              </div>
-              <div class="panel">
-                  <h2>Digital Twin</h2>
-                  <div class="metric pulse">IOT SYNC: ACTIVE</div>
-                  <p>Real-time building diagnostics and maintenance alerts.</p>
-                  <div class="image-container"><img src="digital_twin.png" alt="Digital Twin Building"></div>
-              </div>
-              <div class="panel">
-                  <h2>QA/QC Engine</h2>
-                  <div class="metric">ISO 19650 COMPLIANT</div>
-                  <p>Autonomous governance and model health auditing.</p>
-                  <div class="image-container"><img src="qa_qc_audit.png" alt="QA/QC Audit Engine"></div>
-              </div>
-              <div class="panel">
-                  <h2>Data Center AI</h2>
-                  <div class="metric pulse">RACK DENSITY: OPTIMIZED</div>
-                  <p>Hyperscale infrastructure and thermal path visualization.</p>
-                  <div class="image-container"><img src="dc_ai.png" alt="Data Center AI"></div>
-              </div>
-              <div class="panel">
-                  <h2>System Status</h2>
-                  <div class="metric">SOMA OS v2.4</div>
-                  <p>All modules operational. Neural sync established.</p>
-              </div>
-          </div>
-      </body>
-      </html>
+</head>
+<body>
+
+    <header>
+        <div class="logo hud-font" onclick="showView('home')" style="cursor:pointer">SOMA<span>.AI</span></div>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="showView('home')" class="active" id="nav-home">Home</a></li>
+                <li><a href="#" onclick="showView('command-center')" id="nav-command-center">Command Center</a></li>
+                <li><a href="#" onclick="showView('ai-agents')" id="nav-ai-agents">AI Agents</a></li>
+                <li><a href="#" onclick="showView('digital-twin')" id="nav-digital-twin">Digital Twin</a></li>
+                <li><a href="#" onclick="showView('qa-qc')" id="nav-qa-qc">QA/QC Engine</a></li>
+                <li><a href="#" onclick="showView('data-center')" id="nav-data-center">DC AI</a></li>
+                <li><a href="#" onclick="showView('connectors')" id="nav-connectors">Connectors</a></li>
+                <li><a href="#" onclick="showView('planforge')" id="nav-planforge" style="color:var(--neon-purple)">PlanForge</a></li>
+                <li><a href="#" onclick="showView('modules')" id="nav-modules">Modules</a></li>
+            </ul>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e;"></div>
+            <span style="font-size: 0.6rem; color: var(--accent); font-family:'Orbitron'">REVIT: ACTIVE</span>
+        </div>
+    </header>
+
+    <!-- COMMAND CENTER -->
+    <main id="view-command-center" class="dc-view">
+        <div class="dc-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 0.5rem;">MISSION <span style="color: var(--accent);">CONTROL</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 0.8rem;">Autonomous BIM Operations & Health Orchestration</p>
+                
+                <div class="grid-3" style="margin-bottom: 1.5rem;">
+                    <div class="glass stat-card">
+                        <span class="stat-label">BIM Health Score</span>
+                        <span class="stat-value" style="color: var(--status-success);">98.4%</span>
+                    </div>
+                    <div class="glass stat-card">
+                        <span class="stat-label">Hours Saved</span>
+                        <span class="stat-value">1,420</span>
+                    </div>
+                    <div class="glass stat-card">
+                        <span class="stat-label">AI Agents</span>
+                        <span class="stat-value">12/12</span>
+                    </div>
+                </div>
+
+                <div class="glass widget">
+                    <div class="widget-title">Live Activity Feed</div>
+                    <div class="scroll-container">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div style="font-size: 0.75rem; color: var(--text-main);">Coordination Agent resolved 12 clashes in Zone A</div>
+                                <div style="font-size: 0.6rem; color: var(--text-dim);">2 mins ago • Revit Sync Active</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div style="font-size: 0.75rem; color: var(--text-main);">QA Engine validated ISO 19650 Naming Conventions</div>
+                                <div style="font-size: 0.6rem; color: var(--text-dim);">15 mins ago • ACC Cloud Sync</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div style="font-size: 0.75rem; color: var(--text-main);">MEP Agent optimized cable tray routing for Level 04</div>
+                                <div style="font-size: 0.6rem; color: var(--text-dim);">1 hour ago • Auto-Correction Applied</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="glass view-port" style="height: 450px; margin-bottom: 1.5rem;">
+                    <img src="./soma_command_center_hologram_1778157836776.png" style="width:100%; height:100%; object-fit:cover">
+                    <div class="hud-overlay">
+                        <div class="hud-tag">SCANNING: OPERATIONAL</div>
+                        <div class="hud-tag" style="border-color: var(--neon-purple); color: var(--neon-purple);">AI CORE: ACTIVE</div>
+                    </div>
+                </div>
+                <div class="grid-3">
+                    <div class="glass widget" style="text-align:center">
+                        <div class="widget-title">Clash Reduction</div>
+                        <svg class="circular-chart" viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="85, 100" stroke="var(--accent)" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">85%</div>
+                    </div>
+                    <div class="glass widget" style="text-align:center">
+                        <div class="widget-title">Tasks Done</div>
+                        <svg class="circular-chart" viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="92, 100" stroke="var(--neon-purple)" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">92%</div>
+                    </div>
+                    <div class="glass widget" style="text-align:center">
+                        <div class="widget-title">Compliance</div>
+                        <svg class="circular-chart" viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" stroke-dasharray="78, 100" stroke="var(--neon-gold)" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">78%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI AGENTS -->
+    <main id="view-ai-agents" class="dc-view">
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <h2 class="hud-font" style="font-size: 3rem; margin-bottom: 0.5rem;">AI <span style="color: var(--accent);">AGENT</span> ECOSYSTEM</h2>
+            <p style="color: var(--text-dim);">An autonomous workforce operating a BIM ecosystem.</p>
+        </div>
+        
+        <div style="display: flex; gap: 3rem; align-items: center; margin-bottom: 4rem;">
+            <div style="flex: 1;" class="grid-agents">
+                <div class="glass agent-card">
+                    <div class="agent-status"><div class="pulse"></div> PROCESSING</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Coordination Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Active Clash Resolution<br>Automation: 94%</div>
+                </div>
+                <div class="glass agent-card" style="border-color: var(--neon-purple);">
+                    <div class="agent-status"><div class="pulse" style="background:var(--neon-purple)"></div> IDLE</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">MEP Routing Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Awaiting Input<br>Automation: 88%</div>
+                </div>
+                <div class="glass agent-card" style="border-color: var(--status-success);">
+                    <div class="agent-status"><div class="pulse" style="background:var(--status-success)"></div> SYNCING</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">QA/QC Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Model Health Scan<br>Automation: 100%</div>
+                </div>
+                <div class="glass agent-card">
+                    <div class="agent-status"><div class="pulse"></div> ACTIVE</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Sheet Gen Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Documentation Batch<br>Automation: 97%</div>
+                </div>
+            </div>
+            <div class="glass" style="width: 400px; height: 400px; border-radius: 50%; padding: 20px; position: relative; border: 2px solid var(--accent); box-shadow: 0 0 50px var(--accent-glow);">
+                <img src="./soma_ai_orchestrator_core_1778157856891.png" style="width:100%; height:100%; object-fit:cover; border-radius:50%">
+                <div class="hud-font" style="position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 0.8rem; color: var(--accent);">SOMA AGENT ORCHESTRATOR</div>
+            </div>
+            <div style="flex: 1;" class="grid-agents">
+                <div class="glass agent-card" style="border-color: var(--neon-gold);">
+                    <div class="agent-status"><div class="pulse" style="background:var(--neon-gold)"></div> ANALYZING</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Structural Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Force Flow Intel<br>Automation: 82%</div>
+                </div>
+                <div class="glass agent-card">
+                    <div class="agent-status"><div class="pulse"></div> ACTIVE</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Code Compliance</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: IBC/NFPA Check<br>Automation: 91%</div>
+                </div>
+                <div class="glass agent-card">
+                    <div class="agent-status"><div class="pulse"></div> PROCESSING</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Data Center Agent</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Rack Optimization<br>Automation: 95%</div>
+                </div>
+                <div class="glass agent-card">
+                    <div class="agent-status"><div class="pulse"></div> ACTIVE</div>
+                    <b style="font-family:'Orbitron'; font-size:0.8rem">Space Planner</b>
+                    <div style="font-size: 0.65rem; color: var(--text-dim);">Task: Layout Iteration<br>Automation: 89%</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- DIGITAL TWIN -->
+    <main id="view-digital-twin" class="dc-view">
+        <div class="dc-grid">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">DIGITAL <span style="color: var(--accent);">TWIN</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Real-time operational brain for smart infrastructure.</p>
+                
+                <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem">
+                    <div class="glass widget">
+                        <div class="widget-title">Energy Efficiency</div>
+                        <div class="stat-value" style="color: var(--neon-blue);">A+</div>
+                        <div style="font-size:0.6rem; color:var(--text-dim)">PUE: 1.08</div>
+                    </div>
+                    <div class="glass widget">
+                        <div class="widget-title">Occupancy</div>
+                        <div class="stat-value">64%</div>
+                        <div style="font-size:0.6rem; color:var(--text-dim)">Live Heatmap Active</div>
+                    </div>
+                </div>
+
+                <div class="glass widget">
+                    <div class="widget-title">HVAC Monitoring</div>
+                    <div style="display:flex; flex-direction:column; gap:10px">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <span style="font-size:0.75rem">Server Room Temp</span>
+                            <span style="color:var(--status-success); font-family:'Orbitron'; font-size:0.8rem">21.4°C</span>
+                        </div>
+                        <div style="width:100%; height:4px; background:rgba(255,255,255,0.05); border-radius:2px">
+                            <div style="width:45%; height:100%; background:var(--accent); box-shadow:0 0 10px var(--accent)"></div>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <span style="font-size:0.75rem">Cooling Performance</span>
+                            <span style="color:var(--status-success); font-family:'Orbitron'; font-size:0.8rem">OPTIMAL</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass widget" style="margin-top:1rem">
+                    <div class="widget-title">AI Anomaly Detection</div>
+                    <div style="font-size:0.7rem; color:var(--status-warning)">⚠ PREDICTIVE ALERT: Maintenance required on Air Handling Unit 04 in 48 hours.</div>
+                </div>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_digital_twin_building_1778157872354.png" style="width:100%; height:100%; object-fit:cover">
+                <div class="hud-overlay">
+                    <div class="hud-tag">IOT SYNC: 10ms LATENCY</div>
+                    <div class="hud-tag">SENSORS: 4,208 ONLINE</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QA/QC ENGINE -->
+    <main id="view-qa-qc" class="dc-view">
+        <div class="dc-grid">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">QA/QC <span style="color: var(--accent);">ENGINE</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Autonomous BIM Governance & ISO 19650 Compliance.</p>
+                
+                <div class="glass widget">
+                    <div class="widget-title">Compliance Score</div>
+                    <div style="display:flex; align-items:center; gap:20px">
+                        <div class="stat-value" style="font-size:3rem">94<span style="font-size:1.5rem; color:var(--accent)">/100</span></div>
+                        <div style="font-size:0.8rem; color:var(--status-success)">✓ GRADE: ENTERPRISE READY</div>
+                    </div>
+                </div>
+
+                <div class="glass widget" style="margin-top:1.5rem">
+                    <div class="widget-title">Audit Logs</div>
+                    <div class="scroll-container" style="max-height:300px">
+                        <table style="width:100%; font-size:0.7rem; border-collapse:collapse">
+                            <tr style="border-bottom:1px solid var(--glass-border); color:var(--accent)">
+                                <th style="text-align:left; padding:8px">CHECK</th>
+                                <th style="text-align:left; padding:8px">STATUS</th>
+                                <th style="text-align:left; padding:8px">RESULT</th>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--glass-border)">
+                                <td style="padding:8px">Naming Convention</td>
+                                <td style="padding:8px; color:var(--status-success)">PASSED</td>
+                                <td style="padding:8px">1,240 Elements checked</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--glass-border)">
+                                <td style="padding:8px">Parameter Consistency</td>
+                                <td style="padding:8px; color:var(--status-warning)">WARNING</td>
+                                <td style="padding:8px">12 Missing Fire Ratings</td>
+                            </tr>
+                            <tr style="border-bottom:1px solid var(--glass-border)">
+                                <td style="padding:8px">Clash Verification</td>
+                                <td style="padding:8px; color:var(--status-success)">PASSED</td>
+                                <td style="padding:8px">Zero Hard Clashes</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px">Annotation Check</td>
+                                <td style="padding:8px; color:var(--status-critical)">CRITICAL</td>
+                                <td style="padding:8px">Overlapping Text in S-02</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_qaqc_audit_engine_1778157894006.png" style="width:100%; height:100%; object-fit:cover">
+                <div class="hud-overlay">
+                    <div class="hud-tag">GOVERNANCE: ACTIVE</div>
+                    <div class="hud-tag" style="border-color:var(--status-warning); color:var(--status-warning)">AUDIT IN PROGRESS</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- DATA CENTER AI -->
+    <main id="view-data-center" class="dc-view">
+        <div class="dc-grid">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">DC <span style="color: var(--accent);">INTELLIGENCE</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Hyperscale Infrastructure BIM Automation.</p>
+                
+                <div class="grid-3" style="margin-bottom:1.5rem">
+                    <div class="glass widget">
+                        <div class="widget-title">Rack Density</div>
+                        <div class="stat-value">92%</div>
+                    </div>
+                    <div class="glass widget">
+                        <div class="widget-title">Cable Opt.</div>
+                        <div class="stat-value">84%</div>
+                    </div>
+                    <div class="glass widget">
+                        <div class="widget-title">PUE Predict</div>
+                        <div class="stat-value">1.06</div>
+                    </div>
+                </div>
+
+                <div class="glass widget">
+                    <div class="widget-title">AI Recommendations</div>
+                    <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:0.75rem">
+                        <li style="border-left:2px solid var(--accent); padding-left:10px">◈ Shift Rack R-04 to EDA-2 for thermal balance.</li>
+                        <li style="border-left:2px solid var(--neon-purple); padding-left:10px">◈ Reroute Primary Fiber Trunk to avoid HVAC clash.</li>
+                        <li style="border-left:2px solid var(--accent); padding-left:10px">◈ Batch model 400x Racks in Sector 7G.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_dc_hyperscale_hologram_1778157909538.png" style="width:100%; height:100%; object-fit:cover">
+                <div class="hud-overlay">
+                    <div class="hud-tag">THERMAL: OPTIMIZED</div>
+                    <div class="hud-tag">RACKS: 12,400 DETECTED</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- CONNECTORS -->
+    <main id="view-connectors" class="dc-view">
+        <div class="dc-grid">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">SOMA <span style="color: var(--accent);">CONNECT</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Seamlessly bridge your BIM ecosystem. Select and manage active software connections.</p>
+                <div class="glass widget">
+                    <div class="widget-title">Active Connectors</div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(14,165,233,0.1); border:1px solid var(--accent); border-radius:8px">
+                            <b>Autodesk Revit</b> <span style="color:var(--accent); font-size:0.7rem">CONNECTED</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px">
+                            <b>Autodesk AutoCAD</b> <button class="btn btn-outline" style="padding:4px 12px; font-size:0.6rem" onclick="connectSoftware(this, 'AutoCAD')">CONNECT</button>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:8px">
+                            <b>Autodesk Navisworks</b> <button class="btn btn-outline" style="padding:4px 12px; font-size:0.6rem" onclick="connectSoftware(this, 'Navisworks')">CONNECT</button>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:rgba(14,165,233,0.1); border:1px solid var(--accent); border-radius:8px">
+                            <b>Autodesk Construction Cloud</b> <span style="color:var(--accent); font-size:0.7rem">SYNCING...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_connector_hub_1778135911086.png" style="width:100%; height:100%; object-fit:cover">
+            </div>
+        </div>
+    </main>
+
+    <!-- PLANFORGE -->
+    <main id="view-planforge" class="discipline-view">
+        <div class="discipline-layout">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">SOMA <span style="color: var(--neon-purple);">PLANFORGE</span></h2>
+                <p style="color: var(--text-dim); margin-bottom: 2rem;">Generative Architectural Intelligence. Prompts to BIM in seconds.</p>
+                <div class="glass widget">
+                    <input type="text" id="planforge-input" placeholder="e.g. Create 3BHK modern apartment" style="width:100%; background:rgba(0,0,0,0.3); border:1px solid var(--neon-purple); padding:12px; color:white; border-radius:8px; margin-bottom:12px; outline:none">
+                    <button class="btn btn-primary" style="width:100%; background:var(--neon-purple)" onclick="startPlanForge()">GENERATE BIM LAYOUT</button>
+                    <div id="planforge-status" style="margin-top:15px; font-family:'Orbitron'; font-size:0.6rem; color:var(--neon-purple); display:none">...</div>
+                </div>
+            </div>
+            <div class="glass view-port">
+                <img id="planforge-img" src="./soma_arch_space_planning_1778136425619.png" style="width:100%; height:100%; object-fit:cover; opacity:0.5">
+            </div>
+        </div>
+    </main>
+
+    <!-- MODULES -->
+    <main id="view-modules" class="modules-grid">
+        <div class="glass" style="padding:2rem; text-align:center; cursor:pointer" onclick="showView('arch')"><h3>🏛 ARCH</h3><p>AI Space Planning</p></div>
+        <div class="glass" style="padding:2rem; text-align:center; cursor:pointer" onclick="showView('struct')"><h3>🏗 STRUCT</h3><p>Force-Flow Intel</p></div>
+        <div class="glass" style="padding:2rem; text-align:center; cursor:pointer" onclick="showView('mep')"><h3>⚡ MEP</h3><p>Auto-Routing</p></div>
+        <div class="glass" style="padding:2rem; text-align:center"><h3>✓ QA</h3><p>ISO Compliance</p></div>
+        <div class="glass" style="padding:2rem; text-align:center"><h3>📄 DOCS</h3><p>Zero-Touch Sheets</p></div>
+        <div class="glass" style="padding:2rem; text-align:center"><h3>🌐 TWIN</h3><p>IoT Sync</p></div>
+    </main>
+
+    <!-- ARCH -->
+    <main id="view-arch" class="discipline-view">
+        <div class="discipline-layout">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">SOMA <span style="color: var(--accent);">ARCH</span></h2>
+                <ul class="feature-list">
+                    <li class="feature-item">◈ AI Space Planning</li>
+                    <li class="feature-item">◈ Auto Room Naming</li>
+                    <li class="feature-item">◈ Smart Door/Window Placement</li>
+                    <li class="feature-item">◈ Fire Escape Compliance Check</li>
+                    <li class="feature-item">◈ Area Efficiency Analysis</li>
+                    <li class="feature-item">◈ Auto Ceiling Generation</li>
+                    <li class="feature-item">◈ Smart Furniture Layout</li>
+                    <li class="feature-item">◈ Design Option Generator</li>
+                    <li class="feature-item">◈ Vastu / Code Compliance Mode</li>
+                    <li class="feature-item">◈ AI-Based Interior Concepts</li>
+                </ul>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_arch_space_planning_1778136425619.png" style="width:100%; height:100%; object-fit:cover">
+            </div>
+        </div>
+    </main>
+
+    <!-- STRUCT -->
+    <main id="view-struct" class="discipline-view">
+        <div class="discipline-layout">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">SOMA <span style="color: var(--accent);">STRUCT</span></h2>
+                <ul class="feature-list">
+                    <li class="feature-item">◈ Structural Grid Generator</li>
+                    <li class="feature-item">◈ Auto Beam Connections</li>
+                    <li class="feature-item">◈ Load Path Visualization</li>
+                    <li class="feature-item">◈ AI Foundation Suggestion</li>
+                    <li class="feature-item">◈ ETABS / STAAD Live Sync</li>
+                    <li class="feature-item">◈ Structural Clash Predictor</li>
+                    <li class="feature-item">◈ Rebar Optimization</li>
+                    <li class="feature-item">◈ Seismic Risk Analysis</li>
+                    <li class="feature-item">◈ Steel Connection Intelligence</li>
+                    <li class="feature-item">◈ Quantity & Cost Estimation</li>
+                </ul>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_struct_force_flow_1778136402461.png" style="width:100%; height:100%; object-fit:cover">
+            </div>
+        </div>
+    </main>
+
+    <!-- MEP -->
+    <main id="view-mep" class="discipline-view">
+        <div class="discipline-layout">
+            <div>
+                <h2 class="hud-font" style="font-size: 2.5rem; margin-bottom: 1rem;">SOMA <span style="color: var(--accent);">MEP</span></h2>
+                <ul class="feature-list">
+                    <li class="feature-item">◈ Auto Duct / Pipe Routing</li>
+                    <li class="feature-item">◈ Cable Tray Automation</li>
+                    <li class="feature-item">◈ AI Clash Prevention</li>
+                    <li class="feature-item">◈ Pressure Drop Calculator</li>
+                    <li class="feature-item">◈ Airflow Optimization</li>
+                    <li class="feature-item">◈ Rack-to-Cable Connectivity</li>
+                    <li class="feature-item">◈ Data Center MEP Templates</li>
+                    <li class="feature-item">◈ Auto Sleeve/Openings Generator</li>
+                    <li class="feature-item">◈ NEC/NFPA Compliance Checker</li>
+                </ul>
+            </div>
+            <div class="glass view-port">
+                <img src="./soma_dc_automation_1778132719300.png" style="width:100%; height:100%; object-fit:cover">
+            </div>
+        </div>
+    </main>
+
+    <div class="command-center">
+        <input type="text" class="command-bar" placeholder="Give SOMA a natural language BIM command...">
+    </div>
+
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('main').forEach(m => m.style.display = 'none');
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            const target = document.getElementById('view-' + viewId);
+            if(target) {
+                if(viewId === 'home') target.style.display = 'flex';
+                else if(viewId === 'modules') target.style.display = 'grid';
+                else target.style.display = 'block';
+            }
+            const nav = document.getElementById('nav-' + viewId);
+            if(nav) nav.classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function connectSoftware(btn, name) {
+            btn.innerText = "CONNECTING...";
+            setTimeout(() => {
+                btn.innerText = "CONNECTED";
+                btn.style.color = "#00f2ff";
+                btn.style.borderColor = "#00f2ff";
+                btn.disabled = true;
+                // alert("SOMA CONNECT: Successfully linked to " + name);
+            }, 1500);
+        }
+
+        function startPlanForge() {
+            const status = document.getElementById('planforge-status');
+            const img = document.getElementById('planforge-img');
+            status.style.display = 'block';
+            status.innerText = "[ SOMA BRAIN: OPTIMIZING LAYOUT... ]";
+            img.style.opacity = "0.3";
+            setTimeout(() => {
+                status.innerText = "[ LAYOUT GENERATED SUCCESSFULLY ]";
+                status.style.color = "#00f2ff";
+                img.style.opacity = "1";
+                img.style.filter = "hue-rotate(90deg)";
+            }, 3000);
+        }
+
+        // Live Simulation
+        setInterval(() => {
+            const health = document.querySelector('.stat-value[style*="success"]');
+            if(health && Math.random() > 0.7) {
+                const newVal = (98 + Math.random() * 1).toFixed(1);
+                health.innerText = newVal + "%";
+            }
+        }, 3000);
+
+        showView('home');
+    </script>
+</body>
+</html>
