@@ -1,0 +1,385 @@
+:root {
+    --bg-deep: #020617;
+    --bg-panel: rgba(30, 41, 59, 0.6);
+    --accent: #0ea5e9;
+    --accent-glow: rgba(14, 165, 233, 0.5);
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --neon-blue: #00f2ff;
+    --neon-purple: #bc13fe;
+    --neon-gold: #ffd700;
+    --status-success: #22c55e;
+    --status-warning: #f59e0b;
+    --status-critical: #ef4444;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    overflow-x: hidden;
+    background-image:
+        linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.8)),
+        url('./assets/soma_neural_network_bg_1778136378692.png');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.hud-font {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Glassmorphism */
+.glass {
+    background: var(--bg-panel);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.1);
+}
+
+/* Header */
+header {
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    background: rgba(2, 6, 23, 0.9);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--accent);
+    background: rgba(14, 165, 233, 0.1);
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Views */
+main {
+    display: none;
+    padding-top: 100px;
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.dc-view,
+.discipline-view {
+    padding: 4rem 3rem;
+    min-height: calc(100vh - 100px);
+}
+
+/* Grid Layouts */
+.dc-grid,
+.discipline-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 4rem 3rem;
+}
+
+/* Widgets */
+.widget {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.widget-title {
+    font-family: 'Orbitron';
+    font-size: 0.7rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    font-family: 'Orbitron';
+    font-size: 0.75rem;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.btn-outline:hover {
+    background: rgba(14, 165, 233, 0.1);
+}
+
+/* HUD */
+.view-port {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+}
+
+.hud-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hud-tag {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px 12px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Orbitron';
+    font-size: 0.6rem;
+    border-radius: 4px;
+}
+
+/* Feature Lists */
+.feature-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.feature-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+/* Command Bar */
+.command-center {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    z-index: 2000;
+}
+
+.command-bar {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid var(--accent);
+    border-radius: 50px;
+    padding: 1.2rem 2.5rem;
+    color: white;
+    outline: none;
+    box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+}
+
+/* New Widgets */
+.stat-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'Orbitron';
+    color: var(--text-main);
+}
+
+.stat-label {
+    font-size: 0.6rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.agent-card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 3px solid var(--accent);
+}
+
+.agent-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.6rem;
+    font-family: 'Orbitron';
+}
+
+.pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(14, 165, 233, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+    }
+}
+
+.circular-chart {
+    width: 80px;
+    height: 80px;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 3;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+    border-left: 1px solid var(--glass-border);
+    margin: 1rem 0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--bg-deep);
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.grid-agents {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.scroll-container {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.scroll-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
