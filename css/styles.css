@@ -383,3 +383,18 @@ main {
     background: var(--accent);
     border-radius: 10px;
 }
+
+@keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes scanVertical {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
